@@ -16,40 +16,9 @@ class Login extends React.Component {
     alert('Submitted!');
   };
 
-  constructor(props){
-    super(props);
 
-    this.state = {
-      data: null,
-      cobSession: null
-    };
-  }
 
-  componentDidMount() {
-    fetch('https://developer.api.yodlee.com/ysl/cobrand/login', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Api-Version": "1.1",
-        "Cobrand-Name": "restserver",
-      },
-      body: JSON.stringify({
-          cobrand: {
-            cobrandLogin: 'sbCobd5df3ae017d08381a7984d273428f044ca',
-            cobrandPassword: 'a54f6848-8426-4a85-91cf-b61bd5982f9a',
-            locale: 'en_US'
-          }
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Data', data.session.cobSession);
-        this.setState({
-          cobSession: data.session.cobSession
-        });
-      });
-  }
-  
+
   render() {
     return (
         <form style={styles.form} onSubmit={this.handleOnSubmit}>

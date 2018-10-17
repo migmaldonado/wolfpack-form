@@ -7,6 +7,68 @@ import pic02 from '../images/pic02.jpg'
 import pic03 from '../images/pic03.jpg'
 
 class Main extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        data: null,
+        cobSession: null,
+        isLoading: false,
+        user: null
+      };
+    }
+
+    getSessionId() {
+      fetch('https://developer.api.yodlee.com/ysl/cobrand/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Api-Version": "1.1",
+            "Cobrand-Name": "restserver",
+          },
+          body: JSON.stringify({
+            cobrand: {
+              cobrandLogin: 'sbCobd5df3ae017d08381a7984d273428f044ca',
+              cobrandPassword: 'a54f6848-8426-4a85-91cf-b61bd5982f9a',
+              locale: 'en_US'
+            }
+          })
+        })
+        .then(response => console.log(response.json()))
+        .then(data => {
+          console.log('Data', data.session.cobSession);
+          this.setState({
+            cobSession: data.session.cobSession
+          });
+        });
+    }
+
+    userLogin() {
+      fetch('https://developer.api.yodlee.com/ysl/cobrand/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Api-Version": "1.1",
+            "Cobrand-Name": "restserver",
+            "Authorization": `cobSession=${this.state.cobSession}`
+          },
+          body: JSON.stringify({
+            user: {
+              loginName: 'sbMemd5df3ae017d08381a7984d273428f044ca2',
+              password: 'sbMemd5df3ae017d08381a7984d273428f044ca2#123',
+              locale: 'en_US'
+            }
+          })
+        })
+        .then(response => console.log('USER:', response.json())
+          .then(data => {
+            this.setState({
+              user: data.user
+            });
+          }));
+    }
+
+
   render() {
 
     let close = <div className="close" onClick={() => {this.props.onCloseArticle()}}></div>
@@ -31,8 +93,8 @@ class Main extends React.Component {
 
         <article id="about" className={`${this.props.article === 'about' ? 'active' : ''} ${this.props.articleTimeout ? 'timeout' : ''}`} style={{display:'none'}}>
           <h2 className="major">About</h2>
-          <span className="image main"><img src={pic03} alt="" /></span>
-          <p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+          <button onClick={this.getSessionId}>getSessionId</button>
+          <button onClick={this.userLogin}>userLogin</button>
           {close}
         </article>
 
