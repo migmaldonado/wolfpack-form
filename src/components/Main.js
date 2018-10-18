@@ -1,11 +1,75 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Login from './Login'
 
 import pic01 from '../images/pic01.jpg'
 import pic02 from '../images/pic02.jpg'
 import pic03 from '../images/pic03.jpg'
 
 class Main extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        data: null,
+        cobSession: null,
+        isLoading: false,
+        user: null
+      };
+    }
+    getSessionId() {
+      fetch('https://developer.api.yodlee.com/ysl/cobrand/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Api-Version": "1.1",
+            "Cobrand-Name": "restserver",
+          },
+          body: JSON.stringify({
+            cobrand: {
+              cobrandLogin: 'sbCobd5df3ae017d08381a7984d273428f044ca',
+              cobrandPassword: 'a54f6848-8426-4a85-91cf-b61bd5982f9a',
+              locale: 'en_US'
+            }
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Data', data.session.cobSession);
+
+          this.setState({
+            cobSession : data.session.cobSession
+          });
+
+        });
+    }
+
+    userLogin() {
+      fetch('https://developer.api.yodlee.com/ysl/user/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Api-Version": "1.1",
+            "Cobrand-Name": "restserver",
+            "Authorization": `cobSession=${this.state.cobSession}`
+          },
+          body: JSON.stringify({
+            user: {
+              loginName: 'sbMemd5df3ae017d08381a7984d273428f044ca2',
+              password: 'sbMemd5df3ae017d08381a7984d273428f044ca2#123',
+              locale: 'en_US'
+            }
+          })
+        })
+        .then(response => response.json())
+          .then(data => {
+            this.setState({
+              user: data.user
+            });
+          });
+    }
+
+
   render() {
 
     let close = <div className="close" onClick={() => {this.props.onCloseArticle()}}></div>
@@ -22,17 +86,16 @@ class Main extends React.Component {
         </article>
 
         <article id="work" className={`${this.props.article === 'work' ? 'active' : ''} ${this.props.articleTimeout ? 'timeout' : ''}`} style={{display:'none'}}>
-          <h2 className="major">Work</h2>
+          <h2 className="major">Log In</h2>
           <span className="image main"><img src={pic02} alt="" /></span>
-          <p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
-          <p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
+          <Login></Login>
           {close}
         </article>
 
         <article id="about" className={`${this.props.article === 'about' ? 'active' : ''} ${this.props.articleTimeout ? 'timeout' : ''}`} style={{display:'none'}}>
           <h2 className="major">About</h2>
-          <span className="image main"><img src={pic03} alt="" /></span>
-          <p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+          <button onClick={this.getSessionId}>getSessionId</button>
+          <button onClick={this.userLogin}>userLogin</button>
           {close}
         </article>
 
