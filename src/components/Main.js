@@ -17,7 +17,6 @@ class Main extends React.Component {
         user: null
       };
     }
-
     getSessionId() {
       fetch('https://developer.api.yodlee.com/ysl/cobrand/login', {
           method: "POST",
@@ -34,17 +33,19 @@ class Main extends React.Component {
             }
           })
         })
-        .then(response => console.log(response.json()))
+        .then(response => response.json())
         .then(data => {
           console.log('Data', data.session.cobSession);
+
           this.setState({
-            cobSession: data.session.cobSession
+            cobSession : data.session.cobSession
           });
+
         });
     }
 
     userLogin() {
-      fetch('https://developer.api.yodlee.com/ysl/cobrand/login', {
+      fetch('https://developer.api.yodlee.com/ysl/user/login', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -60,12 +61,12 @@ class Main extends React.Component {
             }
           })
         })
-        .then(response => console.log('USER:', response.json())
+        .then(response => response.json())
           .then(data => {
             this.setState({
               user: data.user
             });
-          }));
+          });
     }
 
 
